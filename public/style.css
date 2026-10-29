@@ -53,3 +53,9 @@ button:active{transform:translateY(0)}
 .steps li{margin:6px 0}
 .steps code{background:#0b1020;padding:2px 6px;border-radius:6px;border:1px solid var(--border);font-size:12px}
 .results[hidden]{display:none}
+.info-box{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(11,16,32,.5);display:grid;gap:6px}
+.info-box[hidden]{display:none}
+.info-title{font-weight:700;color:#cfe;margin-bottom:4px}
+.info-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#cfe}
+.info-row span{color:var(--muted)}
+.info-row strong{color:var(--accent);margin-left:auto;text-align:right;min-width:60px}

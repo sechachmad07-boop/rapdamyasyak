@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DCT Watermark — Tak Kasat Mata</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <header>
@@ -26,6 +26,15 @@
         <p class="muted small">PNG / JPEG, maks 20MB</p>
       </div>
       <img id="origPreview" class="preview" alt="preview asli">
+    </div>
+
+    <div id="imageInfo" class="info-box" hidden>
+      <div class="info-title">Info Gambar</div>
+      <div class="info-row"><span>Panjang (width)</span><strong id="infoW">-</strong> px</div>
+      <div class="info-row"><span>Lebar (height)</span><strong id="infoH">-</strong> px</div>
+      <div class="info-row"><span>Format</span><strong id="infoFmt">-</strong></div>
+      <div class="info-row"><span>Ukuran file</span><strong id="infoSize">-</strong></div>
+      <div class="info-row"><span>Kondisi</span><strong id="infoStatus">-</strong></div>
     </div>
 
     <div class="row">
@@ -52,7 +61,7 @@
       <li><strong>Atur kekuatan:</strong> geser slider "Kekuatan (delta)" (default 30). Lebih besar = lebih tahan JPEG, tapi lebih terlihat.</li>
       <li><strong>Proses:</strong> klik "✨ Proses Sekarang" dan tunggu hasil.</li>
       <li><strong>Unduh:</strong> klik "⬇ Unduh PNG" untuk menyimpan gambar ber-watermark.</li>
-      <li><strong>Verifikasi:</strong> cek badge "Ekstraksi" dan "Uji Tahan JPEG" (harus BERTAHAN ✓).</li>
+      <li><strong>Verifikasi:</strong> cek badge "Ekstraksi" (harus BERTAHAN ✓) dan info gambar (panjang, lebar, kondisi).</li>
     </ol>
     <p class="muted small">Tips: gunakan foto berukuran cukup besar (minimal ~512×512 px untuk pesan pendek) agar watermark muat.</p>
   </section>
@@ -70,14 +79,9 @@
         <div class="badge" id="extractBadge">-</div>
         <p id="extractMsg" class="mono"></p>
       </div>
-      <div class="result-item">
-        <h3>Uji Tahan JPEG</h3>
-        <div class="badge" id="jpegBadge">-</div>
-        <p id="jpegInfo" class="mono"></p>
-      </div>
     </div>
   </section>
 </main>
-<script src="app.js"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
