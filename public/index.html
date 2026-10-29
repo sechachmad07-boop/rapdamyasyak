@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DCT Watermark — Tahan Kompresi JPEG</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">DCT<span>mark</span></div>
+  <div class="tag">Watermark Tak Kasat Mata · Tahan JPEG</div>
+</header>
+<main>
+  <section class="card">
+    <h2>1. Sisipkan Watermark (Embed)</h2>
+    <p class="muted">Pesan teks disisipkan ke channel Y (luminance) via DCT 8×8, QIM.</p>
+    <div class="row">
+      <input type="file" id="embedFile" accept="image/*">
+      <input type="text" id="embedMsg" placeholder="Pesan watermark, mis. nama_kreator" value="nama_kreator">
+    </div>
+    <div class="row">
+      <label>Kekuatan (delta): <output id="strOut">30</output></label>
+      <input type="range" id="strength" min="10" max="60" value="30">
+      <button id="btnEmbed">Sisipkan & Unduh PNG</button>
+    </div>
+    <img id="embedPreview" class="preview" alt="preview">
+    <p id="embedStatus" class="status"></p>
+  </section>
+
+  <section class="card">
+    <h2>2. Ekstrak Watermark (Extract)</h2>
+    <p class="muted">Unggah gambar yang sudah di-watermark (PNG/JPEG).</p>
+    <div class="row">
+      <input type="file" id="extractFile" accept="image/*">
+      <label>Kekuatan (delta): <output id="strOut2">30</output></label>
+      <input type="range" id="strength2" min="10" max="60" value="30">
+      <button id="btnExtract">Ekstrak</button>
+    </div>
+    <p id="extractResult" class="result"></p>
+  </section>
+
+  <section class="card">
+    <h2>3. Uji Tahan Kompresi JPEG</h2>
+    <p class="muted">Embed lalu kompresi JPEG (quality adjustable), lalu extract. Lihat apakah pesan bertahan.</p>
+    <div class="row">
+      <input type="file" id="testFile" accept="image/*">
+      <input type="text" id="testMsg" placeholder="Pesan" value="nama_kreator">
+      <label>Quality JPEG: <output id="qOut">70</output></label>
+      <input type="range" id="quality" min="30" max="95" value="70">
+      <label>Delta: <output id="strOut3">30</output></label>
+      <input type="range" id="strength3" min="10" max="60" value="30">
+      <button id="btnTest">Jalankan Uji</button>
+    </div>
+    <pre id="testResult" class="result"></pre>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
