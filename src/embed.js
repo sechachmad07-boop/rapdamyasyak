@@ -69,9 +69,10 @@ function embed(rgbBuffer, width, height, message, delta = 30) {
   const totalBlocks = blocksX * blocksY;
   const needed = bits.length * REDUNDANCY;
   if (needed > totalBlocks) {
+    const minSide = Math.ceil(Math.sqrt(needed)) * BLOCK;
     throw new Error(
       `Gambar terlalu kecil. Butuh ${needed} blok, tersedia ${totalBlocks}. ` +
-      `Perkecil pesan atau gunakan gambar lebih besar.`
+      `Perkecil pesan atau gunakan gambar lebih besar (minimal sekitar ${minSide}x${minSide} piksel).`
     );
   }
 

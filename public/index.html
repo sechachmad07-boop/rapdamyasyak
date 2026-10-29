@@ -43,6 +43,20 @@
     <p id="status" class="status"></p>
   </section>
 
+  <section class="card">
+    <h2>Cara Pakai (Step by Step)</h2>
+    <ol class="steps">
+      <li><strong>Jalankan server:</strong> double-click <code>start.bat</code> (atau <code>node server.js</code>), lalu buka <code>https://rapdamyasyak.sechachmad07.workers.dev/</code>.</li>
+      <li><strong>Upload foto:</strong> klik area dropzone atau seret file gambar (PNG/JPEG, maks 20MB).</li>
+      <li><strong>Isi pesan:</strong> ketik nama/pesan watermark pada kolom "Pesan watermark".</li>
+      <li><strong>Atur kekuatan:</strong> geser slider "Kekuatan (delta)" (default 30). Lebih besar = lebih tahan JPEG, tapi lebih terlihat.</li>
+      <li><strong>Proses:</strong> klik "✨ Proses Sekarang" dan tunggu hasil.</li>
+      <li><strong>Unduh:</strong> klik "⬇ Unduh PNG" untuk menyimpan gambar ber-watermark.</li>
+      <li><strong>Verifikasi:</strong> cek badge "Ekstraksi" dan "Uji Tahan JPEG" (harus BERTAHAN ✓).</li>
+    </ol>
+    <p class="muted small">Tips: gunakan foto berukuran cukup besar (minimal ~512×512 px untuk pesan pendek) agar watermark muat.</p>
+  </section>
+
   <section class="card results" id="results" hidden>
     <h2>Hasil</h2>
     <div class="result-grid">

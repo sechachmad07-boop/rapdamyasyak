@@ -5,6 +5,10 @@
 
 const $ = (id) => document.getElementById(id);
 
+// Base URL API: jika halaman dibuka langsung dari file (file://),
+// arahkan ke server lokal agar proses tetap bisa berjalan.
+const API_BASE = (location.protocol === 'file:') ? 'http://localhost:3000' : '';
+
 // ---------- Slider sync ----------
 function syncSlider(rangeId, outId) {
   const r = $(rangeId), o = $(outId);
@@ -18,7 +22,12 @@ syncSlider('quality', 'qOut');
 
 // ---------- Helper fetch ----------
 async function postForm(url, formData) {
-  const res = await fetch(url, { method: 'POST', body: formData });
+  let res;
+  try {
+    res = await fetch(API_BASE + url, { method: 'POST', body: formData });
+  } catch (e) {
+    throw new Error('Tidak dapat terhubung ke server. Jalankan "node server.js" lalu buka http://localhost:3000');
+  }
   if (!res.ok) {
     let msg = 'Gagal';
     const ct = res.headers.get('content-type') || '';
@@ -37,7 +46,10 @@ async function postForm(url, formData) {
 }
 
 function isImageFile(f) {
-  return !!f && !!f.type && f.type.indexOf('image/') === 0;
+  if (!f) return false;
+  if (f.type && f.type.indexOf('image/') === 0) return true;
+  const name = (f.name || '').toLowerCase();
+  return /\.(png|jpe?g|webp|bmp|gif|tiff?)$/.test(name);
 }
 
 function setBadge(el, ok) {
@@ -64,6 +76,7 @@ dropzone.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => {
   const f = fileInput.files && fileInput.files[0];
   if (f && isImageFile(f)) { selectedFile = f; showPreview(f); }
+  else if (f) alert('File bukan gambar yang didukung');
 });
 
 dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
@@ -73,6 +86,7 @@ dropzone.addEventListener('drop', (e) => {
   dropzone.classList.remove('drag');
   const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
   if (f && isImageFile(f)) { selectedFile = f; showPreview(f); }
+  else if (f) alert('File bukan gambar yang didukung');
 });
 
 // ---------- Process ----------
@@ -91,7 +105,7 @@ $('btnProcess').addEventListener('click', async () => {
   try {
     // 1. Embed
     const fd = new FormData();
-    fd.append('image', selectedFile);
+    fd.append('image', selectedFile, selectedFile.name || 'image.png');
     fd.append('message', msg);
     fd.append('strength', strength);
     const res = await postForm('/api/embed', fd);
@@ -104,9 +118,8 @@ $('btnProcess').addEventListener('click', async () => {
     dl.download = 'watermarked_' + (selectedFile.name || 'image.png');
 
     // 2. Extract (tanpa kompresi) dari hasil watermark
-    const wmFile = new File([blob], 'watermarked.png', { type: 'image/png' });
     const fd2 = new FormData();
-    fd2.append('image', wmFile);
+    fd2.append('image', blob, 'watermarked.png');
     fd2.append('strength', strength);
     const res2 = await postForm('/api/extract', fd2);
     const j2 = await res2.json();
@@ -115,7 +128,7 @@ $('btnProcess').addEventListener('click', async () => {
 
     // 3. Uji tahan JPEG
     const fd3 = new FormData();
-    fd3.append('image', selectedFile);
+    fd3.append('image', selectedFile, selectedFile.name || 'image.png');
     fd3.append('message', msg);
     fd3.append('quality', quality);
     fd3.append('strength', strength);
@@ -133,3 +146,14 @@ $('btnProcess').addEventListener('click', async () => {
     status.textContent = 'Error: ' + e.message;
   }
 });
+// ---------- Catatan jika dibuka dari file ----------
+(function () {
+  if (location.protocol === 'file:') {
+    const note = document.createElement('p');
+    note.className = 'status';
+    note.style.color = '#ff6b6b';
+    note.textContent = 'Catatan: halaman dibuka dari file. Pastikan server berjalan (node server.js) agar proses bisa berjalan.';
+    const btn = $('btnProcess');
+    if (btn && btn.parentNode) btn.parentNode.insertBefore(note, btn);
+  }
+})();

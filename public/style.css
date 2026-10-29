@@ -49,4 +49,7 @@ button:active{transform:translateY(0)}
 .mono{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#cfe;white-space:pre-wrap;margin:8px 0 0;background:#0b1020;padding:10px;border-radius:8px;border:1px solid var(--border)}
 .btn-link{display:inline-block;margin-top:10px;padding:8px 14px;border-radius:8px;background:var(--accent);color:#0b1020;font-weight:700;text-decoration:none;font-size:13px}
 .btn-link:hover{opacity:.9}
+.steps{padding-left:20px;margin:8px 0;color:#cfe;line-height:1.7}
+.steps li{margin:6px 0}
+.steps code{background:#0b1020;padding:2px 6px;border-radius:6px;border:1px solid var(--border);font-size:12px}
 .results[hidden]{display:none}

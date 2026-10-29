@@ -62,3 +62,21 @@ dct-watermark/
 
 - Channel Y dipilih karena mata manusia kurang sensitif terhadap perubahan luminance halus.
 - Kompresi JPEG memakai DCT 8×8 juga, sehingga watermark pada koefisien frekuensi menengah ikut "terkompresi" bersama gambar.
+
+## Tutorial Penggunaan (Step by Step)
+
+1. Jalankan server: double-click `start.bat` atau `node server.js` di folder proyek.
+2. Buka browser ke `http://localhost:3000` (jangan buka file HTML langsung).
+3. Klik area upload / seret foto (PNG/JPEG, maks 20MB).
+4. Ketik pesan watermark.
+5. Atur kekuatan (delta) dan quality JPEG (opsional).
+6. Klik "Proses Sekarang".
+7. Tunggu hingga muncul hasil, lalu unduh PNG.
+8. Pastikan badge menunjukkan "BERTAHAN ✓".
+
+## Troubleshooting
+
+- **Proses gagal / tidak terhubung:** pastikan server berjalan dan akses via `http://localhost:3000`.
+- **Gambar terlalu kecil:** gunakan foto lebih besar atau perpendek pesan.
+- **Format tidak didukung:** gunakan PNG/JPEG.
+
