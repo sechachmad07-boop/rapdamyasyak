@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DCT Watermark — Tahan Kompresi JPEG</title>
+<title>DCT Watermark — Tak Kasat Mata</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,47 +12,56 @@
   <div class="tag">Watermark Tak Kasat Mata · Tahan JPEG</div>
 </header>
 <main>
-  <section class="card">
-    <h2>1. Sisipkan Watermark (Embed)</h2>
-    <p class="muted">Pesan teks disisipkan ke channel Y (luminance) via DCT 8×8, QIM.</p>
-    <div class="row">
-      <input type="file" id="embedFile" accept="image/*" multiple>
-      <input type="text" id="embedMsg" placeholder="Pesan watermark, mis. nama_kreator" value="nama_kreator">
-    </div>
-    <div class="row">
-      <label>Kekuatan (delta): <output id="strOut">30</output></label>
-      <input type="range" id="strength" min="10" max="60" value="30">
-      <button id="btnEmbed">Sisipkan & Unduh PNG</button>
-    </div>
-    <img id="embedPreview" class="preview" alt="preview">
-    <p id="embedStatus" class="status"></p>
+  <section class="card hero">
+    <h1>Satu foto, satu klik.</h1>
+    <p class="muted">Upload gambar, masukkan pesan, proses. Watermark disisipkan, diverifikasi, dan diuji tahan kompresi JPEG otomatis.</p>
   </section>
 
   <section class="card">
-    <h2>2. Ekstrak Watermark (Extract)</h2>
-    <p class="muted">Unggah gambar yang sudah di-watermark (PNG/JPEG). Mendukung banyak foto.</p>
-    <div class="row">
-      <input type="file" id="extractFile" accept="image/*" multiple>
-      <label>Kekuatan (delta): <output id="strOut2">30</output></label>
-      <input type="range" id="strength2" min="10" max="60" value="30">
-      <button id="btnExtract">Ekstrak</button>
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept="image/*" hidden>
+      <div class="drop-content" id="dropContent">
+        <div class="drop-icon">🖼️</div>
+        <p><strong>Klik atau seret foto ke sini</strong></p>
+        <p class="muted small">PNG / JPEG, maks 20MB</p>
+      </div>
+      <img id="origPreview" class="preview" alt="preview asli">
     </div>
-    <p id="extractResult" class="result"></p>
+
+    <div class="row">
+      <input type="text" id="msg" placeholder="Pesan watermark, mis. nama_kreator" value="nama_kreator">
+    </div>
+    <div class="row sliders">
+      <label>Kekuatan (delta): <output id="strOut">30</output>
+        <input type="range" id="strength" min="10" max="60" value="30">
+      </label>
+      <label>Quality JPEG: <output id="qOut">70</output>
+        <input type="range" id="quality" min="30" max="95" value="70">
+      </label>
+    </div>
+    <button id="btnProcess" class="btn-primary">✨ Proses Sekarang</button>
+    <p id="status" class="status"></p>
   </section>
 
-  <section class="card">
-    <h2>3. Uji Tahan Kompresi JPEG</h2>
-    <p class="muted">Embed lalu kompresi JPEG (quality adjustable), lalu extract. Lihat apakah pesan bertahan.</p>
-    <div class="row">
-      <input type="file" id="testFile" accept="image/*">
-      <input type="text" id="testMsg" placeholder="Pesan" value="nama_kreator">
-      <label>Quality JPEG: <output id="qOut">70</output></label>
-      <input type="range" id="quality" min="30" max="95" value="70">
-      <label>Delta: <output id="strOut3">30</output></label>
-      <input type="range" id="strength3" min="10" max="60" value="30">
-      <button id="btnTest">Jalankan Uji</button>
+  <section class="card results" id="results" hidden>
+    <h2>Hasil</h2>
+    <div class="result-grid">
+      <div class="result-item">
+        <h3>Watermarked</h3>
+        <img id="wmPreview" class="preview show" alt="watermarked">
+        <a id="wmDownload" class="btn-link" download>⬇ Unduh PNG</a>
+      </div>
+      <div class="result-item">
+        <h3>Ekstraksi (tanpa kompresi)</h3>
+        <div class="badge" id="extractBadge">-</div>
+        <p id="extractMsg" class="mono"></p>
+      </div>
+      <div class="result-item">
+        <h3>Uji Tahan JPEG</h3>
+        <div class="badge" id="jpegBadge">-</div>
+        <p id="jpegInfo" class="mono"></p>
+      </div>
     </div>
-    <pre id="testResult" class="result"></pre>
   </section>
 </main>
 <script src="app.js"></script>

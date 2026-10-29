@@ -1,6 +1,6 @@
-﻿// ============================================================
+// ============================================================
 // app.js  --  Frontend logic (Vanilla JS)
-// Memanggil API backend: /api/embed, /api/extract, /api/test-jpeg
+// Satu foto -> embed + extract + uji JPEG, semua otomatis.
 // ============================================================
 
 const $ = (id) => document.getElementById(id);
@@ -14,8 +14,6 @@ function syncSlider(rangeId, outId) {
   update();
 }
 syncSlider('strength', 'strOut');
-syncSlider('strength2', 'strOut2');
-syncSlider('strength3', 'strOut3');
 syncSlider('quality', 'qOut');
 
 // ---------- Helper fetch ----------
@@ -39,95 +37,99 @@ async function postForm(url, formData) {
 }
 
 function isImageFile(f) {
-  return f && f.type && f.type.indexOf('image/') === 0;
+  return !!f && !!f.type && f.type.indexOf('image/') === 0;
 }
 
-// ---------- EMBED (single / multi) ----------
-async function embedOne(file, msg, strength) {
-  const fd = new FormData();
-  fd.append('image', file);
-  fd.append('message', msg);
-  fd.append('strength', strength);
-  const res = await postForm('/api/embed', fd);
-  return res.blob();
+function setBadge(el, ok) {
+  el.textContent = ok ? 'BERTAHAN ✓' : 'RUSAK ✗';
+  el.className = 'badge ' + (ok ? 'ok' : 'bad');
 }
 
-$('btnEmbed').addEventListener('click', async () => {
-  const files = Array.from($('embedFile').files || []);
-  if (!files.length) return alert('Pilih gambar dulu');
-  const msg = $('embedMsg').value;
+// ---------- State ----------
+let selectedFile = null;
+
+function showPreview(file) {
+  const url = URL.createObjectURL(file);
+  const img = $('origPreview');
+  img.src = url;
+  img.classList.add('show');
+  $('dropContent').style.display = 'none';
+}
+
+// ---------- Dropzone ----------
+const dropzone = $('dropzone');
+const fileInput = $('fileInput');
+
+dropzone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+  const f = fileInput.files && fileInput.files[0];
+  if (f && isImageFile(f)) { selectedFile = f; showPreview(f); }
+});
+
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f && isImageFile(f)) { selectedFile = f; showPreview(f); }
+});
+
+// ---------- Process ----------
+$('btnProcess').addEventListener('click', async () => {
+  if (!selectedFile) return alert('Pilih gambar dulu');
+  const msg = $('msg').value.trim();
+  if (!msg) return alert('Pesan watermark kosong');
   const strength = $('strength').value;
-  $('embedStatus').textContent = 'Memproses...';
-  let ok = 0;
-  try {
-    for (const file of files) {
-      if (!isImageFile(file)) continue;
-      const blob = await embedOne(file, msg, strength);
-      const url = URL.createObjectURL(blob);
-      if (files.length === 1) {
-        const img = $('embedPreview');
-        img.src = url;
-        img.classList.add('show');
-      }
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'watermarked_' + (file.name || 'image.png');
-      a.click();
-      ok++;
-    }
-    $('embedStatus').textContent = 'Berhasil! ' + ok + ' file watermarked diunduh.';
-    const s = strength;
-    $('strength2').value = s; $('strOut2').textContent = s;
-    $('strength3').value = s; $('strOut3').textContent = s;
-    $('testMsg').value = msg;
-  } catch (e) {
-    $('embedStatus').textContent = 'Error: ' + e.message;
-  }
-});
+  const quality = $('quality').value;
 
-// ---------- EXTRACT ----------
-$('btnExtract').addEventListener('click', async () => {
-  const files = Array.from($('extractFile').files || []);
-  if (!files.length) return alert('Pilih gambar dulu');
-  const strength = $('strength2').value;
-  $('extractResult').textContent = 'Memproses...';
-  const lines = [];
-  for (const file of files) {
-    if (!isImageFile(file)) continue;
-    try {
-      const fd = new FormData();
-      fd.append('image', file);
-      fd.append('strength', strength);
-      const res = await postForm('/api/extract', fd);
-      const j = await res.json();
-      lines.push(file.name + ' -> "' + j.message + '" (panjang ' + j.length + ')');
-    } catch (e) {
-      lines.push(file.name + ' -> Error: ' + e.message);
-    }
-  }
-  $('extractResult').textContent = lines.join('\n');
-});
+  const status = $('status');
+  const results = $('results');
+  status.textContent = 'Memproses...';
+  results.hidden = true;
 
-// ---------- TEST JPEG ----------
-$('btnTest').addEventListener('click', async () => {
-  const file = $('testFile').files[0];
-  if (!file) return alert('Pilih gambar dulu');
-  const fd = new FormData();
-  fd.append('image', file);
-  fd.append('message', $('testMsg').value);
-  fd.append('quality', $('quality').value);
-  fd.append('strength', $('strength3').value);
-  $('testResult').textContent = 'Memproses...';
   try {
-    const res = await postForm('/api/test-jpeg', fd);
-    const j = await res.json();
-    $('testResult').textContent =
-      'Pesan asli   : ' + j.original + '\n' +
-      'Pesan ekstrak: ' + j.extracted + '\n' +
-      'Quality JPEG : ' + j.quality + '\n' +
-      'Ukuran JPEG  : ' + j.jpegBytes + ' bytes\n' +
-      'Status       : ' + (j.success ? 'BERTAHAN ✓' : 'RUSAK ✗');
+    // 1. Embed
+    const fd = new FormData();
+    fd.append('image', selectedFile);
+    fd.append('message', msg);
+    fd.append('strength', strength);
+    const res = await postForm('/api/embed', fd);
+    const blob = await res.blob();
+    const wmUrl = URL.createObjectURL(blob);
+    const wmImg = $('wmPreview');
+    wmImg.src = wmUrl;
+    const dl = $('wmDownload');
+    dl.href = wmUrl;
+    dl.download = 'watermarked_' + (selectedFile.name || 'image.png');
+
+    // 2. Extract (tanpa kompresi) dari hasil watermark
+    const wmFile = new File([blob], 'watermarked.png', { type: 'image/png' });
+    const fd2 = new FormData();
+    fd2.append('image', wmFile);
+    fd2.append('strength', strength);
+    const res2 = await postForm('/api/extract', fd2);
+    const j2 = await res2.json();
+    $('extractMsg').textContent = '"' + j2.message + '" (panjang ' + j2.length + ')';
+    setBadge($('extractBadge'), j2.message === msg);
+
+    // 3. Uji tahan JPEG
+    const fd3 = new FormData();
+    fd3.append('image', selectedFile);
+    fd3.append('message', msg);
+    fd3.append('quality', quality);
+    fd3.append('strength', strength);
+    const res3 = await postForm('/api/test-jpeg', fd3);
+    const j3 = await res3.json();
+    $('jpegInfo').textContent =
+      'Pesan ekstrak: "' + j3.extracted + '"\n' +
+      'Quality JPEG : ' + j3.quality + '\n' +
+      'Ukuran JPEG  : ' + j3.jpegBytes + ' bytes';
+    setBadge($('jpegBadge'), j3.success);
+
+    results.hidden = false;
+    status.textContent = 'Selesai! ✓';
   } catch (e) {
-    $('testResult').textContent = 'Error: ' + e.message;
+    status.textContent = 'Error: ' + e.message;
   }
 });

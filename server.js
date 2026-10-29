@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // server.js  --  Express API Server
 // Endpoint:
 //   POST /api/embed      -> sisipkan watermark, balas PNG
@@ -78,7 +78,9 @@ app.post('/api/embed', upload.any(), async (req, res) => {
     }
     const message = (req.body.message || '').trim();
     if (!message) return res.status(400).json({ error: 'Pesan watermark kosong' });
+    if (message.length > 1000) return res.status(400).json({ error: 'Pesan terlalu panjang (maks 1000 karakter)' });
     const delta = parseFloat(req.body.strength) || 30;
+    if (isNaN(delta) || delta < 1 || delta > 200) return res.status(400).json({ error: 'Kekuatan (delta) tidak valid' });
 
     const { data, width, height } = await readImage(file.buffer);
     const out = embed(data, width, height, message, delta);
@@ -107,6 +109,7 @@ app.post('/api/extract', upload.any(), async (req, res) => {
       return res.status(400).json({ error: 'File gambar kosong' });
     }
     const delta = parseFloat(req.body.strength) || 30;
+    if (isNaN(delta) || delta < 1 || delta > 200) return res.status(400).json({ error: 'Kekuatan (delta) tidak valid' });
 
     const { data, width, height } = await readImage(file.buffer);
     const message = extract(data, width, height, delta);
@@ -128,8 +131,11 @@ app.post('/api/test-jpeg', upload.any(), async (req, res) => {
     }
     const message = (req.body.message || '').trim();
     if (!message) return res.status(400).json({ error: 'Pesan watermark kosong' });
+    if (message.length > 1000) return res.status(400).json({ error: 'Pesan terlalu panjang (maks 1000 karakter)' });
     const delta = parseFloat(req.body.strength) || 30;
+    if (isNaN(delta) || delta < 1 || delta > 200) return res.status(400).json({ error: 'Kekuatan (delta) tidak valid' });
     const quality = parseInt(req.body.quality, 10) || 70;
+    if (isNaN(quality) || quality < 1 || quality > 100) return res.status(400).json({ error: 'Quality JPEG tidak valid' });
 
     const { data, width, height } = await readImage(file.buffer);
     const out = embed(data, width, height, message, delta);

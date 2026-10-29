@@ -55,6 +55,8 @@ function qimEmbed(coef, bit, delta) {
 // ------------------------------------------------------------
 function embed(rgbBuffer, width, height, message, delta = 30) {
   if (!delta || delta <= 0) delta = 30;
+  if (!message) throw new Error('Pesan watermark kosong');
+
   // 1. Pad ke kelipatan 8
   const padded = padToMultipleOf8(rgbBuffer, width, height);
   const W = padded.width, H = padded.height;
@@ -77,9 +79,6 @@ function embed(rgbBuffer, width, height, message, delta = 30) {
   const { Y, Cb, Cr } = splitChannels(buf, W, H);
 
   // 4. Enumerasi blok & sisipkan
-  let bitIndex = 0;     // blok ke-berapa secara global
-  let blockIdx = 0;     // index bit yang sedang disisipkan
-  // kita iterasi blok; setiap REDUNDANCY blok membawa bit yang sama
   const blockList = [];
   for (let by = 0; by < blocksY; by++) {
     for (let bx = 0; bx < blocksX; bx++) {
@@ -108,7 +107,7 @@ function embed(rgbBuffer, width, height, message, delta = 30) {
     }
   }
 
-  // 5. Merge & crop (keep padded dimensions so extract sees same blocks)
+  // 5. Merge (keep padded dimensions so extract sees same blocks)
   const outBuf = mergeChannels(Y, Cb, Cr, W, H);
   return { buffer: outBuf, width: W, height: H };
 }
