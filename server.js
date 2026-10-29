@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // server.js  --  Express API Server
 // Endpoint:
 //   POST /api/embed      -> sisipkan watermark, balas PNG
@@ -15,31 +15,72 @@ const { embed } = require('./src/embed');
 const { extract } = require('./src/extract');
 
 const app = express();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+// Terima banyak field/file sekaligus (single maupun folder upload) agar
+// tidak muncul error "Unexpected field" saat pengguna memilih folder/foto.
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024, files: 1000 },
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// Ambil file pertama yang diunggah (mendukung single & multiple/folder).
+function getUploadedFile(req) {
+  if (req.file) return req.file;
+  if (Array.isArray(req.files) && req.files.length) return req.files[0];
+  return null;
+}
+
 // Helper: baca gambar upload -> {data Uint8Array, width, height}
 async function readImage(buffer) {
-  const { data, info } = await sharp(buffer)
-    .toColorspace('srgb')
-    .removeAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-  if (info.channels !== 3) throw new Error('Format gambar tidak didukung (bukan RGB)');
+  if (!buffer || !Buffer.isBuffer(buffer) || buffer.length === 0) {
+    const e = new Error('File gambar kosong');
+    e.status = 400;
+    throw e;
+  }
+  let info;
+  let data;
+  try {
+    const out = await sharp(buffer)
+      .rotate()                 // hormati orientasi EXIF (foto kamera)
+      .toColorspace('srgb')
+      .removeAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    data = out.data;
+    info = out.info;
+  } catch (e) {
+    const err = new Error('Format gambar tidak didukung atau file rusak');
+    err.status = 400;
+    throw err;
+  }
+  if (!info || !info.width || !info.height) {
+    const e = new Error('Dimensi gambar tidak valid');
+    e.status = 400;
+    throw e;
+  }
+  if (info.channels !== 3) {
+    const e = new Error('Format gambar tidak didukung (bukan RGB)');
+    e.status = 400;
+    throw e;
+  }
   return { data: new Uint8Array(data), width: info.width, height: info.height };
 }
 
 // ---------- EMBED ----------
-app.post('/api/embed', upload.single('image'), async (req, res) => {
+app.post('/api/embed', upload.any(), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Gambar tidak ditemukan' });
+    const file = getUploadedFile(req);
+    if (!file) return res.status(400).json({ error: 'Gambar tidak ditemukan' });
+    if (!file.buffer || file.buffer.length === 0) {
+      return res.status(400).json({ error: 'File gambar kosong' });
+    }
     const message = (req.body.message || '').trim();
     if (!message) return res.status(400).json({ error: 'Pesan watermark kosong' });
     const delta = parseFloat(req.body.strength) || 30;
 
-    const { data, width, height } = await readImage(req.file.buffer);
+    const { data, width, height } = await readImage(file.buffer);
     const out = embed(data, width, height, message, delta);
 
     const png = await sharp(Buffer.from(out.buffer), {
@@ -52,35 +93,45 @@ app.post('/api/embed', upload.single('image'), async (req, res) => {
     res.send(png);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: e.message });
+    const status = e && e.status ? e.status : 500;
+    res.status(status >= 400 && status < 600 ? status : 500).json({ error: e.message });
   }
 });
 
 // ---------- EXTRACT ----------
-app.post('/api/extract', upload.single('image'), async (req, res) => {
+app.post('/api/extract', upload.any(), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Gambar tidak ditemukan' });
+    const file = getUploadedFile(req);
+    if (!file) return res.status(400).json({ error: 'Gambar tidak ditemukan' });
+    if (!file.buffer || file.buffer.length === 0) {
+      return res.status(400).json({ error: 'File gambar kosong' });
+    }
     const delta = parseFloat(req.body.strength) || 30;
 
-    const { data, width, height } = await readImage(req.file.buffer);
+    const { data, width, height } = await readImage(file.buffer);
     const message = extract(data, width, height, delta);
     res.json({ message, length: message.length });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: e.message });
+    const status = e && e.status ? e.status : 500;
+    res.status(status >= 400 && status < 600 ? status : 500).json({ error: e.message });
   }
 });
 
 // ---------- TEST JPEG ----------
-app.post('/api/test-jpeg', upload.single('image'), async (req, res) => {
+app.post('/api/test-jpeg', upload.any(), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Gambar tidak ditemukan' });
+    const file = getUploadedFile(req);
+    if (!file) return res.status(400).json({ error: 'Gambar tidak ditemukan' });
+    if (!file.buffer || file.buffer.length === 0) {
+      return res.status(400).json({ error: 'File gambar kosong' });
+    }
     const message = (req.body.message || '').trim();
     if (!message) return res.status(400).json({ error: 'Pesan watermark kosong' });
     const delta = parseFloat(req.body.strength) || 30;
     const quality = parseInt(req.body.quality, 10) || 70;
 
-    const { data, width, height } = await readImage(req.file.buffer);
+    const { data, width, height } = await readImage(file.buffer);
     const out = embed(data, width, height, message, delta);
 
     // Kompresi ke JPEG dengan quality tertentu (simulasi kompresi JPEG)
@@ -101,11 +152,20 @@ app.post('/api/test-jpeg', upload.single('image'), async (req, res) => {
     });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: e.message });
+    const status = e && e.status ? e.status : 500;
+    res.status(status >= 400 && status < 600 ? status : 500).json({ error: e.message });
   }
+});
+
+// ---------- Middleware error multer/umum (balas JSON, bukan HTML) ----------
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (res.headersSent) return next(err);
+  res.status(400).json({ error: (err && err.message) ? err.message : 'Upload gagal' });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server berjalan di http://localhost:${PORT}`);
 });
+module.exports = { readImage, getUploadedFile };

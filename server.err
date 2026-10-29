@@ -1,0 +1,3 @@
+Error: Gambar terlalu kecil. Butuh 1464 blok, tersedia 256. Perkecil pesan atau gunakan gambar lebih besar.
+    at embed (C:\Users\Lenovo\Downloads\watermak\dct-watermark\src\embed.js:70:11)
+    at C:\Users\Lenovo\Downloads\watermak\dct-watermark\server.js:84:17

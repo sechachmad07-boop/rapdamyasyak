@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -16,7 +16,7 @@
     <h2>1. Sisipkan Watermark (Embed)</h2>
     <p class="muted">Pesan teks disisipkan ke channel Y (luminance) via DCT 8×8, QIM.</p>
     <div class="row">
-      <input type="file" id="embedFile" accept="image/*">
+      <input type="file" id="embedFile" accept="image/*" multiple>
       <input type="text" id="embedMsg" placeholder="Pesan watermark, mis. nama_kreator" value="nama_kreator">
     </div>
     <div class="row">
@@ -30,9 +30,9 @@
 
   <section class="card">
     <h2>2. Ekstrak Watermark (Extract)</h2>
-    <p class="muted">Unggah gambar yang sudah di-watermark (PNG/JPEG).</p>
+    <p class="muted">Unggah gambar yang sudah di-watermark (PNG/JPEG). Mendukung banyak foto.</p>
     <div class="row">
-      <input type="file" id="extractFile" accept="image/*">
+      <input type="file" id="extractFile" accept="image/*" multiple>
       <label>Kekuatan (delta): <output id="strOut2">30</output></label>
       <input type="range" id="strength2" min="10" max="60" value="30">
       <button id="btnExtract">Ekstrak</button>
