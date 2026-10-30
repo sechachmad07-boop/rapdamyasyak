@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DCT Watermark — Tak Kasat Mata</title>
-<link rel="stylesheet" href="style.css?v=3">
+<title>DCT Watermark - Tak Kasat Mata</title>
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <header>
   <div class="logo">DCT<span>mark</span></div>
-  <div class="tag">Watermark Tak Kasat Mata · Tahan JPEG</div>
+  <div class="tag">Watermark Tak Kasat Mata &middot; Tahan JPEG</div>
 </header>
 <main>
   <section class="card hero">
@@ -21,7 +21,12 @@
     <div class="dropzone" id="dropzone">
       <input type="file" id="fileInput" accept="image/*" hidden>
       <div class="drop-content" id="dropContent">
-        <div class="drop-icon">🖼️</div>
+        <div class="drop-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <p><strong>Klik atau seret foto ke sini</strong></p>
         <p class="muted small">PNG / JPEG, maks 20MB</p>
       </div>
@@ -38,7 +43,7 @@
     </div>
 
     <div class="row">
-      <input type="text" id="msg" placeholder="Pesan watermark, mis. nama_kreator" value="nama_kreator">
+      <input type="text" id="msg" placeholder="Nama Kreator" value="">
     </div>
     <div class="row sliders">
       <label>Kekuatan (delta): <output id="strOut">30</output>
@@ -48,22 +53,22 @@
         <input type="range" id="quality" min="30" max="95" value="70">
       </label>
     </div>
-    <button id="btnProcess" class="btn-primary">✨ Proses Sekarang</button>
+    <button id="btnProcess" class="btn-primary">Proses Sekarang</button>
     <p id="status" class="status"></p>
   </section>
 
   <section class="card">
     <h2>Cara Pakai (Step by Step)</h2>
     <ol class="steps">
-      <li><strong>Jalankan server:</strong> double-click <code>start.bat</code> (atau <code>node server.js</code>), lalu buka <code>https://rapdamyasyak.sechachmad07.workers.dev/</code>.</li>
+      <li><strong>Jalankan server:</strong> double-click <code>start.bat</code> (atau <code>node server.js</code>), lalu buka <code>http://localhost:3000</code>.</li>
       <li><strong>Upload foto:</strong> klik area dropzone atau seret file gambar (PNG/JPEG, maks 20MB).</li>
       <li><strong>Isi pesan:</strong> ketik nama/pesan watermark pada kolom "Pesan watermark".</li>
       <li><strong>Atur kekuatan:</strong> geser slider "Kekuatan (delta)" (default 30). Lebih besar = lebih tahan JPEG, tapi lebih terlihat.</li>
-      <li><strong>Proses:</strong> klik "✨ Proses Sekarang" dan tunggu hasil.</li>
-      <li><strong>Unduh:</strong> klik "⬇ Unduh PNG" untuk menyimpan gambar ber-watermark.</li>
-      <li><strong>Verifikasi:</strong> cek badge "Ekstraksi" (harus BERTAHAN ✓) dan info gambar (panjang, lebar, kondisi).</li>
+      <li><strong>Proses:</strong> klik "Proses Sekarang" dan tunggu hasil.</li>
+      <li><strong>Unduh:</strong> klik "Unduh PNG" untuk menyimpan gambar ber-watermark.</li>
+      <li><strong>Verifikasi:</strong> cek badge "Ekstraksi" (harus BERTAHAN) dan info gambar (panjang, lebar, kondisi).</li>
     </ol>
-    <p class="muted small">Tips: gunakan foto berukuran cukup besar (minimal ~512×512 px untuk pesan pendek) agar watermark muat.</p>
+    <p class="muted small">Tips: gunakan foto berukuran cukup besar (minimal ~512x512 px untuk pesan pendek) agar watermark muat.</p>
   </section>
 
   <section class="card results" id="results" hidden>
@@ -72,7 +77,7 @@
       <div class="result-item">
         <h3>Watermarked</h3>
         <img id="wmPreview" class="preview show" alt="watermarked">
-        <a id="wmDownload" class="btn-link" download>⬇ Unduh PNG</a>
+        <a id="wmDownload" class="btn-link" download>Unduh PNG</a>
       </div>
       <div class="result-item">
         <h3>Ekstraksi (tanpa kompresi)</h3>
@@ -82,6 +87,6 @@
     </div>
   </section>
 </main>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

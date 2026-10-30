@@ -185,7 +185,7 @@ $('btnProcess').addEventListener('click', async () => {
       fd2.append('strength', strength);
       const res2 = await postForm('/api/extract', fd2);
       const j2 = await res2.json();
-      $('extractMsg').textContent = '"' + j2.message + '" (panjang ' + j2.length + ')';
+      $('extractMsg').textContent = 'Pesan: ' + (j2.message || '').trim() + ' (panjang ' + j2.length + ')';
       setBadge($('extractBadge'), j2.message === msg);
     } catch (e) {
       $('extractMsg').textContent = 'Verifikasi tidak tersedia: ' + e.message;

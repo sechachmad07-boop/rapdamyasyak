@@ -18,7 +18,7 @@ const { dct2d, idct2d } = require('./dct');
 const { splitChannels, mergeChannels, padToMultipleOf8, cropToOriginal } = require('./imageUtils');
 
 const BLOCK = 8;
-const REDUNDANCY = 3;          // tiap bit di 3 blok
+const REDUNDANCY = 5;          // tiap bit di 5 blok
 const COEF_U = 3;              // koefisien frekuensi menengah
 const COEF_V = 3;
 

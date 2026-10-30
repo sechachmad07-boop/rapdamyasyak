@@ -19,7 +19,15 @@ const app = express();
 // tidak muncul error "Unexpected field" saat pengguna memilih folder/foto.
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 20 * 1024 * 1024, files: 1000 },
+  limits: { fileSize: 20 * 1024 * 1024, files: 10 },
+  fileFilter: (req, file, cb) => {
+    // Terima hanya file yang tampak seperti gambar (berdasarkan mimetype).
+    // Validasi konten sebenarnya dilakukan di server via sharp.
+    if (file && file.mimetype && (file.mimetype.startsWith('image/') || file.mimetype === 'application/octet-stream')) return cb(null, true);
+    // Beberapa klien mengirim mimetype kosong; izinkan dan biarkan sharp memvalidasi.
+    if (file && !file.mimetype) return cb(null, true);
+    cb(new Error('File bukan gambar yang didukung'));
+  },
 });
 
 // Izinkan akses dari file:// / origin lain (galeri/file picker, mobile)
@@ -54,7 +62,7 @@ async function readImage(buffer) {
   let data;
   // Jika gambar terlalu kecil, perbesar agar watermark muat dan proses berhasil.
   let meta = null;
-  try { meta = await sharp(buffer).metadata(); } catch (e) { meta = null; }
+  try { meta = await sharp(buffer).rotate().metadata(); } catch (e) { meta = null; }
   const minSide = 512;
   let resizeOpts = null;
   if (meta && meta.width && meta.height) {
@@ -102,7 +110,7 @@ app.post('/api/info', upload.any(), async (req, res) => {
       return res.status(400).json({ error: 'File gambar kosong' });
     }
     let meta = null;
-    try { meta = await sharp(file.buffer).metadata(); } catch (e) { meta = null; }
+    try { meta = await sharp(file.buffer).rotate().metadata(); } catch (e) { meta = null; }
 
     let status = 'Rusak';
     let reason = 'File gambar rusak atau tidak didukung';
@@ -110,14 +118,13 @@ app.post('/api/info', upload.any(), async (req, res) => {
     let height = (meta && meta.height) || null;
     try {
       const r = await readImage(file.buffer);
-      width = r.width;
-      height = r.height;
       status = 'Bagus';
       reason = 'Gambar valid dan dapat diproses';
-      if (r.width < 32 || r.height < 32) {
+      if (width && height && (width < 32 || height < 32)) {
         status = 'Rusak';
         reason = 'Resolusi gambar terlalu kecil';
       }
+      // keep original reported dimensions (r may be upscaled)
     } catch (e) {
       status = 'Rusak';
       reason = (e && e.message) ? e.message : reason;
@@ -147,7 +154,7 @@ app.post('/api/embed', upload.any(), async (req, res) => {
     if (!file.buffer || file.buffer.length === 0) {
       return res.status(400).json({ error: 'File gambar kosong' });
     }
-    const message = (req.body.message || '').trim();
+    const message = String(req.body.message || '').trim();
     if (!message) return res.status(400).json({ error: 'Pesan watermark kosong' });
     if (message.length > 1000) return res.status(400).json({ error: 'Pesan terlalu panjang (maks 1000 karakter)' });
     const delta = parseFloat(req.body.strength) || 30;
@@ -201,7 +208,7 @@ app.post('/api/test-jpeg', upload.any(), async (req, res) => {
     if (!file.buffer || file.buffer.length === 0) {
       return res.status(400).json({ error: 'File gambar kosong' });
     }
-    const message = (req.body.message || '').trim();
+    const message = String(req.body.message || '').trim();
     if (!message) return res.status(400).json({ error: 'Pesan watermark kosong' });
     if (message.length > 1000) return res.status(400).json({ error: 'Pesan terlalu panjang (maks 1000 karakter)' });
     const delta = parseFloat(req.body.strength) || 30;

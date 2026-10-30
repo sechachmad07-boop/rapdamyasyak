@@ -11,7 +11,7 @@ const { dct2d } = require('./dct');
 const { splitChannels, padToMultipleOf8 } = require('./imageUtils');
 
 const BLOCK = 8;
-const REDUNDANCY = 3;
+const REDUNDANCY = 5;
 const COEF_U = 3;
 const COEF_V = 3;
 

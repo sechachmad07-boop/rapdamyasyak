@@ -32,7 +32,8 @@ button:active{transform:translateY(0)}
 .dropzone{border:2px dashed var(--border);border-radius:14px;padding:24px;text-align:center;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s,background .2s;background:rgba(11,16,32,.4)}
 .dropzone:hover,.dropzone.drag{border-color:var(--accent);background:rgba(124,240,200,.06)}
 .drop-content{padding:12px}
-.drop-icon{font-size:42px;margin-bottom:8px}
+.drop-icon{font-size:42px;margin-bottom:8px;color:var(--accent)}
+.drop-icon svg{width:56px;height:56px;display:block;margin:0 auto}
 .dropzone .preview{max-width:100%;margin-top:12px;border-radius:10px;border:1px solid var(--border);display:none}
 .dropzone .preview.show{display:block}
 
@@ -59,3 +60,13 @@ button:active{transform:translateY(0)}
 .info-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#cfe}
 .info-row span{color:var(--muted)}
 .info-row strong{color:var(--accent);margin-left:auto;text-align:right;min-width:60px}
+@media (max-width: 640px) {
+  header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 16px; }
+  main { margin: 16px auto; padding: 0 12px; }
+  .card { padding: 16px; }
+  .sliders { flex-direction: column; gap: 12px; align-items: stretch; }
+  input[type=range] { width: 100%; }
+  .row input[type=text] { flex: 1 1 100%; }
+  .btn-primary { font-size: 15px; }
+}
+
