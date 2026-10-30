@@ -1,92 +1,28 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DCT Watermark - Tak Kasat Mata</title>
-<link rel="stylesheet" href="style.css?v=4">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Markly — Watermark Studio</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="logo">DCT<span>mark</span></div>
-  <div class="tag">Watermark Tak Kasat Mata &middot; Tahan JPEG</div>
-</header>
+<header><a class="logo" href="#"><span>M</span> markly<span class="dot">.</span></a><div class="privacy">● Proses langsung di perangkatmu</div></header>
 <main>
-  <section class="card hero">
-    <h1>Satu foto, satu klik.</h1>
-    <p class="muted">Upload gambar, masukkan pesan, proses. Watermark disisipkan, diverifikasi, dan diuji tahan kompresi JPEG otomatis.</p>
-  </section>
-
-  <section class="card">
-    <div class="dropzone" id="dropzone">
-      <input type="file" id="fileInput" accept="image/*" hidden>
-      <div class="drop-content" id="dropContent">
-        <div class="drop-icon">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4 16V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <p><strong>Klik atau seret foto ke sini</strong></p>
-        <p class="muted small">PNG / JPEG, maks 20MB</p>
-      </div>
-      <img id="origPreview" class="preview" alt="preview asli">
-    </div>
-
-    <div id="imageInfo" class="info-box" hidden>
-      <div class="info-title">Info Gambar</div>
-      <div class="info-row"><span>Panjang (width)</span><strong id="infoW">-</strong> px</div>
-      <div class="info-row"><span>Lebar (height)</span><strong id="infoH">-</strong> px</div>
-      <div class="info-row"><span>Format</span><strong id="infoFmt">-</strong></div>
-      <div class="info-row"><span>Ukuran file</span><strong id="infoSize">-</strong></div>
-      <div class="info-row"><span>Kondisi</span><strong id="infoStatus">-</strong></div>
-    </div>
-
-    <div class="row">
-      <input type="text" id="msg" placeholder="Nama Kreator" value="">
-    </div>
-    <div class="row sliders">
-      <label>Kekuatan (delta): <output id="strOut">30</output>
-        <input type="range" id="strength" min="10" max="60" value="30">
-      </label>
-      <label>Quality JPEG: <output id="qOut">70</output>
-        <input type="range" id="quality" min="30" max="95" value="70">
-      </label>
-    </div>
-    <button id="btnProcess" class="btn-primary">Proses Sekarang</button>
-    <p id="status" class="status"></p>
-  </section>
-
-  <section class="card">
-    <h2>Cara Pakai (Step by Step)</h2>
-    <ol class="steps">
-      <li><strong>Jalankan server:</strong> double-click <code>start.bat</code> (atau <code>node server.js</code>), lalu buka <code>http://localhost:3000</code>.</li>
-      <li><strong>Upload foto:</strong> klik area dropzone atau seret file gambar (PNG/JPEG, maks 20MB).</li>
-      <li><strong>Isi pesan:</strong> ketik nama/pesan watermark pada kolom "Pesan watermark".</li>
-      <li><strong>Atur kekuatan:</strong> geser slider "Kekuatan (delta)" (default 30). Lebih besar = lebih tahan JPEG, tapi lebih terlihat.</li>
-      <li><strong>Proses:</strong> klik "Proses Sekarang" dan tunggu hasil.</li>
-      <li><strong>Unduh:</strong> klik "Unduh PNG" untuk menyimpan gambar ber-watermark.</li>
-      <li><strong>Verifikasi:</strong> cek badge "Ekstraksi" (harus BERTAHAN) dan info gambar (panjang, lebar, kondisi).</li>
-    </ol>
-    <p class="muted small">Tips: gunakan foto berukuran cukup besar (minimal ~512x512 px untuk pesan pendek) agar watermark muat.</p>
-  </section>
-
-  <section class="card results" id="results" hidden>
-    <h2>Hasil</h2>
-    <div class="result-grid">
-      <div class="result-item">
-        <h3>Watermarked</h3>
-        <img id="wmPreview" class="preview show" alt="watermarked">
-        <a id="wmDownload" class="btn-link" download>Unduh PNG</a>
-      </div>
-      <div class="result-item">
-        <h3>Ekstraksi (tanpa kompresi)</h3>
-        <div class="badge" id="extractBadge">-</div>
-        <p id="extractMsg" class="mono"></p>
-      </div>
-    </div>
-  </section>
-</main>
-<script src="app.js?v=4"></script>
-</body>
-</html>
+<section class="hero"><p class="eyebrow">✦ CREATOR TOOLKIT</p><h1>Kontenmu. <em>Namamu.</em><br>Selalu melekat.</h1><p class="intro">Tambahkan watermark nama ke foto atau video dalam beberapa klik. Atur tampilannya, lalu unduh hasilnya.</p><div class="steps"><span>01　Unggah media</span><b>—</b><span>02　Atur watermark</span><b>—</b><span>03　Unduh hasil</span></div></section>
+<section id="studio"><div class="heading"><div><small>WORKSPACE</small><h2>Watermark studio</h2></div><span>File tidak dikirim ke server</span></div>
+<div class="workspace"><aside>
+<h3>01　Identitas watermark</h3><p class="muted">Nama yang akan tampil di media</p><label for="name">Nama / username</label><input id="name" value="nama_kamu" maxlength="48">
+<hr><h3>02　Gaya watermark</h3><p class="muted">Sesuaikan dengan gayamu</p><label>Posisi watermark</label><div class="positions"><button data-pos="top-left">↖</button><button data-pos="top-center">↑</button><button data-pos="top-right">↗</button><button data-pos="middle-left">←</button><button data-pos="center">＋</button><button data-pos="middle-right">→</button><button data-pos="bottom-left">↙</button><button data-pos="bottom-center">↓</button><button class="active" data-pos="bottom-right">↘</button></div>
+<div class="range-label"><label for="opacity">Transparansi</label><output id="opval">78%</output></div><input type="range" id="opacity" min="15" max="100" value="78">
+<div class="range-label"><label for="size">Ukuran teks</label><output id="sizeval">24 px</output></div><input type="range" id="size" min="12" max="64" value="24">
+<label class="check"><input id="shadow" type="checkbox" checked> Tambahkan bayangan teks</label><button class="reset" id="reset">↺ Atur ulang</button>
+</aside>
+<div class="preview"><div class="previewbar"><b>🟢 Live preview</b><small id="type">BELUM ADA MEDIA</small></div><div class="stage" id="stage">
+<div class="empty" id="empty"><div class="uploadicon">↑</div><h3>Mulai dari file kamu</h3><p>Seret foto atau video ke sini, atau pilih file dari perangkat.</p><button class="primary" id="choose">Pilih foto / video　↗</button><small>JPG, PNG, WEBP, MP4, WEBM, MOV</small></div>
+<img id="img" hidden alt="Pratinjau foto"><video id="vid" controls playsinline hidden></video><div id="wm" hidden></div></div>
+<div class="file" id="filebox" hidden><div>▧</div><section><b id="filename"></b><small id="filesize"></small></section><button id="remove">×</button></div><div class="previewfoot"><span>✓ Pratinjau diperbarui otomatis</span><span id="hint">Unggah media untuk memulai</span></div></div></div>
+<div class="downloadrow"><div><b>Sudah terlihat pas?</b><p>Unduh salinan media dengan watermark tertanam.</p></div><button class="download" id="download" disabled>Unduh hasil　↓</button></div><p id="status" role="status">Pilih file untuk mulai. Semua pemrosesan dilakukan di browser.</p>
+</section>
+<section class="how"><small>SIMPEL DARI AWAL</small><h2>Tiga langkah. Selesai.</h2><div class="howgrid"><article><b>01</b><h3>Unggah media</h3><p>Pilih foto atau video dari perangkatmu.</p></article><article><b>02</b><h3>Personalisasi</h3><p>Tulis username dan atur posisi, ukuran, serta transparansi.</p></article><article><b>03</b><h3>Simpan hasil</h3><p>Unduh file baru dengan watermark yang sudah menyatu.</p></article></div></section>
+<footer><a class="logo" href="#"><span>M</span> markly<span class="dot">.</span></a><small>Made for creators · Pemrosesan lokal di browser</small></footer>
+</main><input id="picker" type="file" accept="image/*,video/*" hidden><script src="script.js"></script>
+</body></html>
